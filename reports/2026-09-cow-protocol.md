@@ -24,6 +24,9 @@
 > the settlement event and interaction ordering, but never settles a trade that
 > actually moves tokens. Nothing tests the seam between the two.
 
+> Every finding below was reviewed by hand against the source. One severity was
+> downgraded from the automated assessment; it says so in its entry.
+
 ---
 
 ## Summary
@@ -42,8 +45,8 @@
 
 | Severity | Count |
 |---|---:|
-| CRITICAL | 4 |
-| HIGH | 5 |
+| CRITICAL | 3 |
+| HIGH | 6 |
 | MEDIUM | 1 |
 
 **Least defended**: CRITICAL — Removal of vaultRelayer.transferFromAccounts drains protocol funds (`src/contracts/GPv2Settlement.sol:134`)
@@ -136,7 +139,7 @@ Add an integration test for `settle()` that, after a successful call, asserts th
 
 ---
 
-### 3. [CRITICAL] Missing inTransfer.account assignment breaks sell-token attribution
+### 3. [HIGH] Missing inTransfer.account assignment breaks sell-token attribution
 
 **Location**: `src/contracts/GPv2Settlement.sol:433` in `computeTradeExecution()`  
 **Type**: Logic Error / Broken Invariant (Missing State Assignment)  
@@ -179,6 +182,8 @@ With the assignment deleted, `inTransfer.account` retains its default zero-initi
 **Recommended test**
 
 Add a unit test for `computeTradeExecution` (or an integration test on `settle()`) that asserts the resulting `GPv2Transfer.Data.account` field for the in-transfer equals `recoveredOrder.owner`, and an integration test that verifies actual ERC20 balance changes after `settle()` show the sell token debited from the order owner's account (not address(0)) and credited to the settlement/vault. A mock ERC20 that records the `from` argument of `transferFrom` calls would directly catch this mutant, since it would observe `from == address(0)` instead of the expected owner.
+
+> **Reviewer note**: Downgraded from CRITICAL on hand review. With `inTransfer.account` left at `address(0)`, `transferFromAccounts` attempts an ERC20 `transferFrom` from the zero address and reverts. The effect is a denial of service, not silent misattribution.
 
 ---
 
