@@ -34,11 +34,18 @@ about test quality, and counting them inflates the result.
 |---|---|---|---:|---:|---:|
 | 2026-09 | [Arcadia Finance](reports/2026-09-arcadia-lending-pool.md) | `LendingPool.sol` | 549 | 92.9% | **24** |
 | 2026-09 | [Morpho Vaults V2](reports/2026-09-morpho-vault-v2.md) | `VaultV2.sol` | 495 | **100%** | 0 |
+| 2026-09 | [CoW Protocol](reports/2026-09-cow-protocol.md) | `GPv2Settlement.sol` | 96 | 89.6% | **9** |
 
-Across 1,044 mutations on two lending protocols, every undefended invariant with
-real impact landed in one place: Arcadia's liquidation and bad-debt path. Its
-`borrow` and flash-action paths are thoroughly defended. Morpho's suite caught
-everything.
+Three protocols, 1,140 mutations, three different answers.
+
+**Arcadia** defends its happy path thoroughly; every undefended invariant with
+real impact is in its liquidation and bad-debt code.
+
+**Morpho** caught all 495.
+
+**CoW** shows a different shape: nine of ten survivors are on the transfer side
+of settlement. The transfer library and the execution maths are each well
+tested in isolation — nothing tests the seam where `settle()` joins them.
 
 A 100% score is as much a result as a 92.9% one. A tool that always finds
 something is not measuring anything.
