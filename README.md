@@ -30,9 +30,22 @@ about test quality, and counting them inflates the result.
 
 ## Reports
 
-| Date | Protocol | Scope | Result |
-|---|---|---|---|
-| — | — | — | *first report in progress* |
+| Date | Protocol | Scope | Mutations | Score | Undefended |
+|---|---|---|---:|---:|---:|
+| 2026-09 | [Arcadia Finance](reports/2026-09-arcadia-lending-pool.md) | `LendingPool.sol` | 549 | 92.9% | **24** |
+| 2026-09 | [Morpho Vaults V2](reports/2026-09-morpho-vault-v2.md) | `VaultV2.sol` | 495 | **100%** | 0 |
+
+Across 1,044 mutations on two lending protocols, every undefended invariant with
+real impact landed in one place: Arcadia's liquidation and bad-debt path. Its
+`borrow` and flash-action paths are thoroughly defended. Morpho's suite caught
+everything.
+
+A 100% score is as much a result as a 92.9% one. A tool that always finds
+something is not measuring anything.
+
+Every finding is reviewed by hand against the source before publication.
+Of the 24 on Arcadia, 24 held up mechanically and 4 had their severity
+downgraded; the reports say which.
 
 ## Contact
 
