@@ -35,17 +35,28 @@ about test quality, and counting them inflates the result.
 | 2026-09 | [Arcadia Finance](reports/2026-09-arcadia-lending-pool.md) | `LendingPool.sol` | 549 | 92.9% | **24** |
 | 2026-09 | [Morpho Vaults V2](reports/2026-09-morpho-vault-v2.md) | `VaultV2.sol` | 495 | **100%** | 0 |
 | 2026-09 | [CoW Protocol](reports/2026-09-cow-protocol.md) | `GPv2Settlement.sol` | 96 | 89.6% | **9** |
+| 2026-09 | [Gearbox core-v3](reports/2026-09-gearbox-core-v3.md) | `PoolV3.sol` | 220 | 97.7% | 4 |
 
-Three protocols, 1,140 mutations, three different answers.
+Four protocols, 1,360 mutations, four different answers.
+
+**Morpho** caught all 495 of its mutations.
+
+**Gearbox** caught 97.7% — and the residue includes a line its own source
+annotates as covered by two named tests. Both tests assert on the allowance,
+with the arguments to `allowance(owner, spender)` the wrong way round, so they
+read a mapping entry that is zero either way. Delete the allowance check
+entirely and all 343 tests still pass.
 
 **Arcadia** defends its happy path thoroughly; every undefended invariant with
 real impact is in its liquidation and bad-debt code.
 
-**Morpho** caught all 495.
+**CoW** shows a third shape: nine of ten survivors are on the transfer side of
+settlement. The transfer library and the execution maths are each well tested
+in isolation — nothing tests the seam where `settle()` joins them.
 
-**CoW** shows a different shape: nine of ten survivors are on the transfer side
-of settlement. The transfer library and the execution maths are each well
-tested in isolation — nothing tests the seam where `settle()` joins them.
+The pattern across all four: teams test the happy path and they test components
+in isolation. What goes undefended is the error paths, and the seams between
+components.
 
 A 100% score is as much a result as a 92.9% one. A tool that always finds
 something is not measuring anything.
